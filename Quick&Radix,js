@@ -1,0 +1,68 @@
+# Implementasi Quick Sort
+# Quick sort adalah algoritma berbasis divide-and-conquer. Algoritma ini bekerja dengan memilih satu elemen sebagai 'pivot'
+# kemudian membagi elemen lainnya ke dalam dua sub-array berdasarkan apakah elemen tersebut lebih kecil atau lebih besar dari pivot.
+
+def quick_sort(arr):
+    if len(arr) <= 1:
+        # Kasus dasar: Jika array memiliki 0 atau 1 elemen, maka sudah terurut.
+        return arr
+    else:
+        # Pilih elemen pivot (biasanya elemen terakhir dalam array).
+        pivot = arr[-1]
+        # Partisi array menjadi dua sub-array:
+        # - Elemen yang lebih kecil dari pivot
+        # - Elemen yang lebih besar atau sama dengan pivot
+        less_than_pivot = [x for x in arr[:-1] if x < pivot]
+        greater_than_pivot = [x for x in arr[:-1] if x >= pivot]
+        # Terapkan quick sort secara rekursif pada sub-array dan gabungkan dengan pivot
+        return quick_sort(less_than_pivot) + [pivot] + quick_sort(greater_than_pivot)
+
+# Implementasi Radix Sort
+# Radix sort adalah algoritma pengurutan non-komparatif. Algoritma ini bekerja dengan mengurutkan angka
+# berdasarkan setiap digitnya, mulai dari digit paling tidak signifikan hingga digit paling signifikan.
+
+def radix_sort(arr):
+    # Temukan angka maksimum untuk menentukan jumlah digit maksimum
+    max_num = max(arr)
+    exp = 1  # Eksponen mewakili posisi digit saat ini (1 untuk satuan, 10 untuk puluhan, dll.)
+    while max_num // exp > 0:
+        # Lakukan pengurutan berbasis digit pada posisi saat ini
+        arr = counting_sort_by_digit(arr, exp)
+        exp *= 10  # Pindah ke digit berikutnya
+    return arr
+
+def counting_sort_by_digit(arr, exp):
+    n = len(arr)
+    output = [0] * n  # Array output untuk menyimpan angka yang sudah diurutkan
+    count = [0] * 10  # Array count untuk menyimpan frekuensi digit (0-9)
+
+    # Hitung frekuensi kemunculan setiap digit pada posisi saat ini
+    for num in arr:
+        index = (num // exp) % 10
+        count[index] += 1
+
+    # Perbarui array count untuk menyimpan posisi akhir setiap digit di array output
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+
+    # Bangun array output dengan menempatkan angka pada posisi yang sesuai
+    for i in range(n - 1, -1, -1):  # Iterasi secara terbalik untuk menjaga stabilitas
+        index = (arr[i] // exp) % 10
+        output[count[index] - 1] = arr[i]
+        count[index] -= 1
+
+    return output
+
+# Contoh penggunaan:
+if __name__ == "__main__":
+    # Contoh quick sort
+    array1 = [10, 7, 8, 9, 1, 5]
+    print("Array awal:", array1)
+    sorted_array1 = quick_sort(array1)
+    print("Array setelah diurutkan (Quick Sort):", sorted_array1)
+
+    # Contoh radix sort
+    array2 = [170, 45, 75, 90, 802, 24, 2, 66]
+    print("Array awal:", array2)
+    sorted_array2 = radix_sort(array2)
+    print("Array setelah diurutkan (Radix Sort):", sorted_array2)
